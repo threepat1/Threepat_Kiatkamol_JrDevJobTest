@@ -10,7 +10,7 @@ public class Player : MonoBehaviour
 
     [SerializeField] private LayerMask m_Enemy;
     [SerializeField] private LayerMask m_Ground;
-    [SerializeField] private float max_health;
+    [SerializeField] private float max_health = 100;
     [SerializeField] private float current_health;
     [SerializeField] private float atk;
     [SerializeField] private float atk_range;
@@ -22,10 +22,15 @@ public class Player : MonoBehaviour
     // Enemy
     private Transform m_Target;
 
+
+    public Enemy enemy;
+
     void Start()
     {
+        current_health = max_health;
         m_Anim = GetComponent<Animator>();
         m_Agent = GetComponent<NavMeshAgent>();
+        enemy = GetComponent<Enemy>();
     }
 
     // Update is called once per frame
@@ -39,12 +44,15 @@ public class Player : MonoBehaviour
 
             if(Physics.Raycast(ray, out hit, Mathf.Infinity, m_Enemy))
             {
-                m_Target = hit.collider.transform;
-                m_Anim.Play(Walk);
-                if (m_Target != null)
+                Enemy enemy = hit.collider.gameObject.GetComponent<Enemy>();
+                if (enemy != null)
                 {
-                    m_Target.TakeDamage(atk);
+                    enemy.TakeDamage(atk);
+
                 }
+                m_Target = hit.collider.transform;
+                m_Anim.Play(Attack,-1,-1);
+                
 
                 m_Agent.SetDestination(m_Target.position);
             }
@@ -71,7 +79,8 @@ public class Player : MonoBehaviour
         if (current_health <= 0)
         {
             current_health = 0;
-            Die();
+       
         }
     }
+   
 }

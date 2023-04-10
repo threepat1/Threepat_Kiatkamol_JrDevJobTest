@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -18,7 +19,7 @@ public class Enemy : MonoBehaviour
     // Enemy
     private Transform m_Target;
 
-    [SerializeField] private float max_health;
+    [SerializeField] private float max_health = 100;
     [SerializeField] private float current_health;
     [SerializeField] private float atk;
     [SerializeField] private float atk_range;
@@ -26,6 +27,7 @@ public class Enemy : MonoBehaviour
 
     void Start()
     {
+        current_health = max_health;
         m_Anim = GetComponent<Animator>();
         m_Agent = GetComponent<NavMeshAgent>();
         m_Target = GameObject.FindObjectOfType<Player>().transform;
@@ -52,7 +54,13 @@ public class Enemy : MonoBehaviour
         if (current_health <= 0)
         {
             current_health = 0;
-            Die();
+            Dead();
         }
+    }
+    public void Dead()
+    {
+        m_Anim.SetTrigger(Die);
+        m_Agent.isStopped = true;
+        Destroy(this);
     }
 }
